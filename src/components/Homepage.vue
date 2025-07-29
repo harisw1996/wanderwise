@@ -13,84 +13,130 @@ import {
   ShareSocialOutline,
   ArrowForwardOutline,
   ChatbubbleOutline,
-  CloseOutline
+  CloseOutline,
+  CalendarOutline,
+  WalletOutline,
+  PeopleOutline
 } from '@vicons/ionicons5'
 
 const emit = defineEmits<{
   startPlanning: []
 }>()
 
+// Search form data
+const searchForm = ref({
+  destination: '',
+  startDate: '',
+  endDate: '',
+  tripType: '',
+  budget: ''
+})
 
+const tripTypes = [
+  { value: 'solo', label: 'Solo', icon: '👤' },
+  { value: 'family', label: 'Family', icon: '👨‍👩‍👧‍👦' },
+  { value: 'work', label: 'Work', icon: '💼' },
+  { value: 'honeymoon', label: 'Honeymoon', icon: '💕' }
+]
 
-// Floating assistant
-const showAssistant = ref(true)
+const budgetRanges = [
+  { value: 'budget', label: 'Budget', range: '$500-1000' },
+  { value: 'moderate', label: 'Moderate', range: '$1000-2500' },
+  { value: 'luxury', label: 'Luxury', range: '$2500+' }
+]
 
-const destinations = [
-  { 
-    name: 'Kyoto', 
-    image: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400&h=300&fit=crop', 
-    country: 'Japan',
-    tags: ['🏛️ Culture', '🍁 Nature'],
-    weather: '🌤️ 22°C',
-    priceRange: '$800-1200'
+// Trip resume data
+const activeTrips = [
+  {
+    id: 1,
+    destination: '🌴 Bali Family Trip',
+    progress: 80,
+    status: '80% Complete',
+    lastActivity: 'Added hotel preferences'
   },
+  {
+    id: 2,
+    destination: '🇯🇵 Japan Adventure',
+    progress: 60,
+    status: 'Flights Booked, Itinerary In Progress',
+    lastActivity: 'Booked flights for March 15'
+  }
+]
+
+// Trending destinations
+const trendingDestinations = [
   { 
     name: 'Santorini', 
     image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400&h=300&fit=crop', 
     country: 'Greece',
-    tags: ['🏝️ Beach', '🥘 Food'],
+    theme: 'Romantic Getaway',
     weather: '☀️ 28°C',
-    priceRange: '$1000-1500'
+    priceRange: '$1000-1500',
+    tags: ['🏝️ Beach', '💕 Romantic']
   },
   { 
     name: 'Banff', 
     image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop', 
     country: 'Canada',
-    tags: ['🏔️ Adventure', '🍁 Nature'],
+    theme: 'Nature + Adventure',
     weather: '❄️ 5°C',
-    priceRange: '$600-900'
+    priceRange: '$600-900',
+    tags: ['🏔️ Adventure', '🍁 Nature']
   },
   { 
     name: 'Bali', 
     image: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400&h=300&fit=crop', 
     country: 'Indonesia',
-    tags: ['🏝️ Beach', '🧘 Relaxation'],
+    theme: 'Beach & Culture',
     weather: '🌤️ 30°C',
-    priceRange: '$500-800'
+    priceRange: '$500-800',
+    tags: ['🏝️ Beach', '🏛️ Culture']
   },
   { 
-    name: 'Paris', 
-    image: 'https://images.unsplash.com/photo-1502602898535-0e2b9b2b7b1a?w=400&h=300&fit=crop', 
-    country: 'France',
-    tags: ['🏛️ Culture', '🥘 Food'],
-    weather: '🌤️ 18°C',
-    priceRange: '$900-1400'
+    name: 'Tokyo', 
+    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&h=300&fit=crop', 
+    country: 'Japan',
+    theme: 'Food & Shopping',
+    weather: '🌤️ 22°C',
+    priceRange: '$800-1200',
+    tags: ['🍜 Food', '🛍️ Shopping']
+  }
+]
+
+// Inspiration categories
+const inspirationCategories = [
+  {
+    title: '🍲 Best Food Cities for Fall',
+    description: 'Discover culinary adventures in autumn',
+    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=300&h=200&fit=crop'
   },
-  { 
-    name: 'Machu Picchu', 
-    image: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=400&h=300&fit=crop', 
-    country: 'Peru',
-    tags: ['🏔️ Adventure', '🏛️ Culture'],
-    weather: '🌤️ 15°C',
-    priceRange: '$700-1100'
+  {
+    title: '⛰️ Nature Escapes Within $800',
+    description: 'Budget-friendly outdoor adventures',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop'
+  },
+  {
+    title: '👩‍👩‍👧‍👦 Family-Friendly European Spots',
+    description: 'Perfect destinations for the whole family',
+    image: 'https://images.unsplash.com/photo-1502602898535-0e2b9b2b7b1a?w=300&h=200&fit=crop'
   }
 ]
 
 const testimonials = [
   {
-    quote: "Wanderwise made my honeymoon stress-free! The AI suggested perfect restaurants and activities we never would have found.",
-    author: "🇺🇸 Sarah & Mike",
-    trip: "Paris Honeymoon",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face"
-  },
-  {
-    quote: "I planned a 10-day trip to Japan in 5 minutes. The itinerary was perfect and included hidden gems.",
+    quote: "We planned our 10-day Japan trip in 5 minutes. Everything was on point.",
     author: "🇨🇦 Alex Chen",
     trip: "Japan Adventure",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face"
   },
   {
-    quote: "The weather predictions were spot-on and helped us pack perfectly. No more overpacking!",
+    quote: "Wanderwise made our honeymoon completely stress-free.",
+    author: "🇫🇷 Sarah & Mike",
+    trip: "Paris Honeymoon",
+    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face"
+  },
+  {
+    quote: "The AI suggestions were spot-on. Found hidden gems we never would have discovered.",
     author: "🇪🇸 Maria Rodriguez",
     trip: "Bali Family Trip",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face"
@@ -121,28 +167,36 @@ const features = [
 ]
 
 const steps = [
-  { icon: LocationOutline, label: "Intent & Dates", description: "Tell us where and when" },
-  { icon: AirplaneOutline, label: "Flights", description: "AI finds the best routes" },
-  { icon: BedOutline, label: "Hotels", description: "Perfect accommodations" },
-  { icon: SunnyOutline, label: "Weather", description: "Smart packing guidance" },
-  { icon: MapOutline, label: "Itinerary", description: "Daily plans & activities" },
-  { icon: CheckmarkCircleOutline, label: "Final Review", description: "Perfect your trip" }
+  { icon: LocationOutline, label: "Intent", description: "Destination, dates, type, budget" },
+  { icon: AirplaneOutline, label: "Flights", description: "Best options via AI (price + comfort)" },
+  { icon: BedOutline, label: "Hotels", description: "Matches your vibe (luxury, budget, scenic)" },
+  { icon: SunnyOutline, label: "Weather", description: "Forecast + packing tips" },
+  { icon: MapOutline, label: "Itinerary", description: "Auto-built based on pace & preferences" },
+  { icon: CheckmarkCircleOutline, label: "Final Review", description: "Share, export, or revisit your plan" }
 ]
+
+// Floating assistant
+const showAssistant = ref(true)
+const assistantMessage = ref("Looks like you're planning a trip to Paris. Want help finding activities for Day 3?")
 
 const handleStartPlanning = () => {
   emit('startPlanning')
 }
 
-
-
 const closeAssistant = () => {
   showAssistant.value = false
+}
+
+const handleSearch = () => {
+  // Handle search form submission
+  console.log('Search submitted:', searchForm.value)
+  handleStartPlanning()
 }
 </script>
 
 <template>
   <div class="homepage">
-    <!-- Hero Section -->
+    <!-- Hero Section with Search -->
     <section class="hero-section">
       <img 
         src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop&auto=format&q=80" 
@@ -162,35 +216,101 @@ const closeAssistant = () => {
         
         <div class="hero-text-container">
           <h1 class="hero-title">
-            Discover Your Next Adventure
-            <span class="title-highlight">Planned Intelligently with AI</span>
+            Where to?
           </h1>
           
           <p class="hero-subtitle">
-            Tell us where, when, and how — Wanderwise handles the rest.
+            Plan your perfect trip with AI-powered suggestions
           </p>
         </div>
         
-        <div class="hero-actions">
-          <n-button 
-            type="primary" 
-            size="large" 
-            class="cta-button"
-            @click="handleStartPlanning"
-          >
-            <template #icon>
-              <n-icon><SparklesOutline /></n-icon>
-            </template>
-            Plan My Trip
-          </n-button>
-          
-          <n-button 
-            size="large" 
-            class="demo-button"
-            ghost
-          >
-            Explore Ideas
-          </n-button>
+        <!-- Hero Search Bar -->
+        <div class="hero-search-container">
+          <div class="search-form">
+            <div class="search-row">
+              <div class="search-field">
+                <n-icon size="20" color="#6366F1">
+                  <LocationOutline />
+                </n-icon>
+                <input 
+                  v-model="searchForm.destination"
+                  type="text" 
+                  placeholder="Where do you want to go?"
+                  class="search-input"
+                />
+              </div>
+              
+              <div class="search-field">
+                <n-icon size="20" color="#6366F1">
+                  <CalendarOutline />
+                </n-icon>
+                <input 
+                  v-model="searchForm.startDate"
+                  type="date" 
+                  class="search-input"
+                />
+              </div>
+              
+              <div class="search-field">
+                <n-icon size="20" color="#6366F1">
+                  <CalendarOutline />
+                </n-icon>
+                <input 
+                  v-model="searchForm.endDate"
+                  type="date" 
+                  class="search-input"
+                />
+              </div>
+            </div>
+            
+            <div class="search-row">
+              <div class="search-field">
+                <n-icon size="20" color="#6366F1">
+                  <PeopleOutline />
+                </n-icon>
+                <select v-model="searchForm.tripType" class="search-input">
+                  <option value="">Trip Type</option>
+                  <option v-for="type in tripTypes" :key="type.value" :value="type.value">
+                    {{ type.icon }} {{ type.label }}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="search-field">
+                <n-icon size="20" color="#6366F1">
+                  <WalletOutline />
+                </n-icon>
+                <select v-model="searchForm.budget" class="search-input">
+                  <option value="">Budget</option>
+                  <option v-for="budget in budgetRanges" :key="budget.value" :value="budget.value">
+                    {{ budget.label }} ({{ budget.range }})
+                  </option>
+                </select>
+              </div>
+              
+              <div class="search-actions">
+                <n-button 
+                  type="primary" 
+                  size="large" 
+                  class="search-cta"
+                  @click="handleSearch"
+                >
+                  <template #icon>
+                    <n-icon><SparklesOutline /></n-icon>
+                  </template>
+                  📍 Plan My Trip
+                </n-button>
+                
+                <n-button 
+                  size="large" 
+                  class="explore-button"
+                  ghost
+                >
+                  💡 Explore Ideas
+                </n-button>
+              </div>
+            </div>
+          </div>
         </div>
         
         <!-- Scroll indicator -->
@@ -200,13 +320,100 @@ const closeAssistant = () => {
       </div>
     </section>
 
-
-
-    <!-- How It Works Section -->
-    <section class="how-it-works">
+    <!-- Resume Where You Left Off -->
+    <section class="resume-section">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Your Trip in 6 Smart Steps</h2>
+          <h2 class="section-title">Resume Where You Left Off</h2>
+          <p class="section-subtitle">Continue planning your adventures</p>
+        </div>
+        
+        <div class="trip-resume-grid">
+          <div 
+            v-for="trip in activeTrips" 
+            :key="trip.id"
+            class="trip-resume-card"
+          >
+            <div class="trip-info">
+              <h3 class="trip-destination">{{ trip.destination }}</h3>
+              <p class="trip-status">{{ trip.status }}</p>
+              <p class="trip-activity">{{ trip.lastActivity }}</p>
+            </div>
+            <div class="trip-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" :style="{ width: trip.progress + '%' }"></div>
+              </div>
+              <span class="progress-text">{{ trip.progress }}%</span>
+            </div>
+            <n-button size="small" type="primary" class="resume-button">
+              Resume
+            </n-button>
+          </div>
+          
+          <div class="view-all-trips">
+            <n-button size="large" ghost class="view-all-button">
+              ➕ View All Trips
+              <template #icon>
+                <n-icon><ArrowForwardOutline /></n-icon>
+              </template>
+            </n-button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Destinations -->
+    <section class="trending-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">💡 Trending Destinations</h2>
+          <p class="section-subtitle">Get inspired by what's popular right now</p>
+        </div>
+        
+        <div class="trending-grid">
+          <div 
+            v-for="destination in trendingDestinations" 
+            :key="destination.name"
+            class="trending-card"
+          >
+            <div class="trending-image">
+              <img 
+                :src="destination.image" 
+                :alt="destination.name"
+                @error="$event.target.src='https://picsum.photos/400/300?random=100'"
+                loading="lazy"
+              />
+              <div class="trending-tags">
+                <span 
+                  v-for="tag in destination.tags" 
+                  :key="tag"
+                  class="trending-tag"
+                >
+                  {{ tag }}
+                </span>
+              </div>
+              <div class="trending-overlay">
+                <div class="trending-info">
+                  <h3 class="trending-name">{{ destination.name }}</h3>
+                  <p class="trending-country">{{ destination.country }}</p>
+                  <p class="trending-theme">{{ destination.theme }}</p>
+                  <div class="trending-details">
+                    <span class="weather-info">{{ destination.weather }}</span>
+                    <span class="price-info">{{ destination.priceRange }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Smart Steps Section -->
+    <section class="smart-steps">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">🧳 Plan Your Trip in 6 Smart Steps</h2>
           <p class="section-subtitle">Wanderwise does the heavy lifting. You just enjoy the journey.</p>
         </div>
         
@@ -233,7 +440,7 @@ const closeAssistant = () => {
     <section class="why-wanderwise">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Why Choose Wanderwise?</h2>
+          <h2 class="section-title">❤️ Why People Love Wanderwise</h2>
           <p class="section-subtitle">Built for modern travelers who want more than just a booking site.</p>
         </div>
         
@@ -290,48 +497,41 @@ const closeAssistant = () => {
       </div>
     </section>
 
-    <!-- Destination Gallery Section -->
-    <section class="destination-gallery">
+    <!-- Inspiration Board -->
+    <section class="inspiration-section">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">Popular Destinations</h2>
-          <p class="section-subtitle">Get inspired by these amazing places and start planning your next adventure.</p>
+          <h2 class="section-title">✈️ Just Browsing? Explore Ideas</h2>
+          <p class="section-subtitle">Discover inspiration for your next adventure</p>
         </div>
         
-        <div class="destinations-grid">
+        <div class="inspiration-grid">
           <div 
-            v-for="destination in destinations" 
-            :key="destination.name"
-            class="destination-card"
+            v-for="category in inspirationCategories" 
+            :key="category.title"
+            class="inspiration-card"
           >
-            <div class="destination-image">
+            <div class="inspiration-image">
               <img 
-                :src="destination.image" 
-                :alt="destination.name"
-                @error="$event.target.src='https://picsum.photos/400/300?random=100'"
+                :src="category.image" 
+                :alt="category.title"
+                @error="$event.target.src='https://picsum.photos/300/200?random=200'"
                 loading="lazy"
               />
-              <div class="destination-tags">
-                <span 
-                  v-for="tag in destination.tags" 
-                  :key="tag"
-                  class="destination-tag"
-                >
-                  {{ tag }}
-                </span>
-              </div>
-              <div class="destination-overlay">
-                <div class="destination-info">
-                  <h3 class="destination-name">{{ destination.name }}</h3>
-                  <p class="destination-country">{{ destination.country }}</p>
-                  <div class="destination-details">
-                    <span class="weather-info">{{ destination.weather }}</span>
-                    <span class="price-info">{{ destination.priceRange }}</span>
-                  </div>
-                </div>
+              <div class="inspiration-overlay">
+                <h3 class="inspiration-title">{{ category.title }}</h3>
+                <p class="inspiration-description">{{ category.description }}</p>
               </div>
             </div>
           </div>
+        </div>
+        
+        <div class="inspiration-filters">
+          <span class="filter-tag">Beach</span>
+          <span class="filter-tag">Culture</span>
+          <span class="filter-tag">Romantic</span>
+          <span class="filter-tag">Budget</span>
+          <span class="filter-tag">Solo</span>
         </div>
       </div>
     </section>
@@ -375,14 +575,14 @@ const closeAssistant = () => {
     <div v-if="showAssistant" class="floating-assistant">
       <div class="assistant-content">
         <div class="assistant-header">
-          <span class="assistant-title">💬 Need help planning?</span>
+          <span class="assistant-title">🤖 Powered by Wanderwise Assistant</span>
           <button class="close-assistant" @click="closeAssistant">
             <n-icon size="16">
               <CloseOutline />
             </n-icon>
           </button>
         </div>
-        <p class="assistant-message">I can suggest ideas or help you resume previous planning!</p>
+        <p class="assistant-message">{{ assistantMessage }}</p>
         <n-button size="small" type="primary" class="assistant-cta">
           <template #icon>
             <n-icon><ChatbubbleOutline /></n-icon>
@@ -491,14 +691,61 @@ const closeAssistant = () => {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
-.hero-actions {
+.hero-search-container {
+  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
   display: flex;
-  gap: var(--spacing-lg);
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.search-row {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  flex: 1;
+  min-width: 150px;
+}
+
+.search-input {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  width: 100%;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-actions {
+  display: flex;
+  gap: var(--spacing-md);
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.cta-button {
+.search-cta {
   height: 56px;
   font-weight: 700;
   font-size: 1.1rem;
@@ -506,14 +753,16 @@ const closeAssistant = () => {
   border: none !important;
   border-radius: var(--radius-lg);
   transition: all 0.3s ease;
+  flex: 1;
+  min-width: 200px;
 }
 
-.cta-button:hover {
+.search-cta:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
 }
 
-.demo-button {
+.explore-button {
   height: 56px;
   font-weight: 600;
   font-size: 1.1rem;
@@ -521,9 +770,11 @@ const closeAssistant = () => {
   border: 2px solid rgba(255, 255, 255, 0.3);
   color: white;
   transition: all 0.3s ease;
+  flex: 1;
+  min-width: 200px;
 }
 
-.demo-button:hover {
+.explore-button:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-3px) scale(1.05);
@@ -574,8 +825,245 @@ const closeAssistant = () => {
   margin: 0 auto;
 }
 
-/* How It Works Section */
-.how-it-works {
+/* Resume Where You Left Off */
+.resume-section {
+  padding: var(--spacing-3xl) 0;
+  background: var(--background);
+}
+
+.trip-resume-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.trip-resume-card {
+  background: white;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.trip-resume-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.trip-info {
+  margin-bottom: var(--spacing-md);
+}
+
+.trip-destination {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.trip-status {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.trip-activity {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin: 0;
+}
+
+.trip-progress {
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.progress-bar {
+  flex-grow: 1;
+  height: 8px;
+  background: var(--border-light);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.resume-button {
+  width: 100%;
+  font-weight: 700;
+  font-size: 1rem;
+  background: var(--gradient-primary) !important;
+  border: none !important;
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+}
+
+.resume-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+}
+
+.view-all-trips {
+  width: 100%;
+  text-align: center;
+}
+
+.view-all-button {
+  height: 56px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.view-all-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px);
+}
+
+/* Trending Destinations */
+.trending-section {
+  padding: var(--spacing-3xl) 0;
+  background: white;
+}
+
+.trending-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.trending-card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.trending-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.trending-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.trending-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.trending-card:hover .trending-image img {
+  transform: scale(1.1);
+}
+
+.trending-tags {
+  position: absolute;
+  top: var(--spacing-md);
+  left: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+  z-index: 2;
+}
+
+.trending-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: white;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  white-space: nowrap;
+}
+
+.trending-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: var(--spacing-lg);
+  z-index: 2;
+}
+
+.trending-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.trending-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.trending-country {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.trending-theme {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 0;
+}
+
+.trending-details {
+  display: flex;
+  gap: var(--spacing-md);
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-top: var(--spacing-xs);
+}
+
+.weather-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Smart Steps Section */
+.smart-steps {
   padding: var(--spacing-3xl) 0;
   background: var(--background);
 }
@@ -770,19 +1258,19 @@ const closeAssistant = () => {
   font-size: 0.9rem;
 }
 
-/* Destination Gallery Section */
-.destination-gallery {
+/* Inspiration Board */
+.inspiration-section {
   padding: var(--spacing-3xl) 0;
-  background: white;
+  background: var(--background);
 }
 
-.destinations-grid {
+.inspiration-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-lg);
 }
 
-.destination-card {
+.inspiration-card {
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -790,52 +1278,30 @@ const closeAssistant = () => {
   cursor: pointer;
 }
 
-.destination-card:hover {
+.inspiration-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
-.destination-image {
+.inspiration-image {
   position: relative;
-  height: 250px;
+  height: 200px;
   overflow: hidden;
   background: transparent;
 }
 
-.destination-image img {
+.inspiration-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.destination-card:hover .destination-image img {
+.inspiration-card:hover .inspiration-image img {
   transform: scale(1.1);
 }
 
-.destination-tags {
-  position: absolute;
-  top: var(--spacing-md);
-  left: var(--spacing-md);
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  display: flex;
-  gap: var(--spacing-xs);
-  z-index: 2;
-}
-
-.destination-tag {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: white;
-  background: var(--gradient-primary);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  white-space: nowrap;
-}
-
-.destination-overlay {
+.inspiration-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -846,41 +1312,40 @@ const closeAssistant = () => {
   z-index: 2;
 }
 
-.destination-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.destination-name {
-  font-size: 1.5rem;
+.inspiration-title {
+  font-size: 1.3rem;
   font-weight: 700;
   margin: 0 0 var(--spacing-xs) 0;
 }
 
-.destination-country {
-  margin: 0;
-  opacity: 0.9;
-}
-
-.destination-details {
-  display: flex;
-  gap: var(--spacing-md);
+.inspiration-description {
   font-size: 0.9rem;
   color: var(--text-light);
-  margin-top: var(--spacing-xs);
+  margin: 0;
 }
 
-.weather-info {
+.inspiration-filters {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  justify-content: center;
 }
 
-.price-info {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+.filter-tag {
+  background: var(--border-light);
+  color: var(--text);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-tag:hover {
+  background: var(--border-light);
+  color: var(--text);
 }
 
 /* Final CTA Section */
@@ -1030,6 +1495,29 @@ const closeAssistant = () => {
     font-size: 1.1rem;
   }
   
+  .hero-search-container {
+    margin: var(--spacing-lg);
+  }
+  
+  .search-row {
+    flex-direction: column;
+  }
+  
+  .search-field {
+    min-width: auto;
+  }
+  
+  .search-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .search-cta,
+  .explore-button {
+    min-width: auto;
+    width: 100%;
+  }
+  
   .hero-actions,
   .cta-actions {
     flex-direction: column;
@@ -1039,7 +1527,9 @@ const closeAssistant = () => {
   .steps-grid,
   .features-grid,
   .testimonials-grid,
-  .destinations-grid {
+  .trending-grid,
+  .inspiration-grid,
+  .trip-resume-grid {
     grid-template-columns: 1fr;
   }
   
@@ -1052,21 +1542,24 @@ const closeAssistant = () => {
     right: 10px;
   }
   
-
-  
   .hero-content {
     padding: var(--spacing-xl);
     margin: var(--spacing-lg);
   }
   
-  .destination-tags {
+  .trending-tags {
     flex-direction: column;
     gap: var(--spacing-xs);
   }
   
-  .destination-details {
+  .trending-details {
     flex-direction: column;
     gap: var(--spacing-xs);
+  }
+  
+  .inspiration-filters {
+    flex-direction: column;
+    align-items: center;
   }
 }
 
