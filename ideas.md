@@ -1,131 +1,139 @@
-# 🏠 Wanderwise Homepage Wireframe (Inspiration + Structure)
+# 🛫 Wanderwise – Personalized Travel Planning, Reimagined
 
-> A modern, AI-powered travel planner should feel personal, magical, and effortless.  
-> This homepage wireframe combines proven UX patterns from top travel sites with Wanderwise’s unique flow.
-
----
-
-## 🌍 1. Hero Section — "Plan Smarter. Travel Better."
-
-**Purpose**: Immediate emotional impact + strong CTA to begin trip planning
-
-### Features:
-- Full-width hero image or looping background video (e.g. mountain, airplane wing, city skyline)
-- Headline: **“Your Dream Trip, Designed by AI”**
-- Subheading: *“Tell us where, when, and how — Wanderwise handles the rest.”*
-- CTA: `Start Planning` button (routes to `/plan`)
-- Optional: Animated elements (e.g., plane flying, pin drops, moving clouds)
-- Optional: Demo Button — `Try Sample Trip`
+> ✨ **AI-powered travel planning** that feels like magic — not work.
 
 ---
 
-## 🧭 2. How It Works — Step-by-Step Guide
+## 🔍 Where to?
 
-**Purpose**: Show users the simple planning flow with confidence
+```vue
+<HeroSearchBar />
+```
 
-### Layout:
-- Horizontally scrollable or grid of 6 steps
-- Icon + Label per step:
-  - 📍 Intent & Dates
-  - ✈️ Flights
-  - 🏨 Hotels
-  - 🌤️ Weather
-  - 🧭 Itinerary
-  - ✅ Final Review
-- Title: *“Your Trip in 6 Smart Steps”*
-- Subtext: *“Wanderwise does the heavy lifting. You just enjoy the journey.”*
+A single input module that asks:
 
----
+- **Destination**
+- **Dates**
+- **Trip Type** (Solo, Family, Work, Honeymoon)
+- **Budget**
 
-## 🚀 3. Why Wanderwise — Feature Highlights
-
-**Purpose**: Build trust and excitement around the product
-
-### 3–4 Cards:
-- ✨ **AI-Powered Planning** — Personalized trip flows
-- 💡 **Smart Suggestions** — Packing, food, interests
-- 🎒 **Save & Share Trips** — Sync across devices
-- 🔒 **Privacy First** — Your data stays yours
+CTA: [📍 Plan My Trip] [💡 Explore Ideas]
 
 ---
 
-## 💬 4. Testimonials — "Traveler Voices"
+## 🧭 Resume Where You Left Off
 
-**Purpose**: Build credibility with real users or seeded examples
+```vue
+<TripResumeCard />
+```
 
-### Carousel or Grid:
-- Quote + Avatar + Trip name or location
-- “Wanderwise made my honeymoon stress-free!”
-- “I planned a 10-day trip in 5 minutes.”
-
----
-
-## 🖼️ 5. Moodboard or Destination Gallery (Optional)
-
-**Purpose**: Spark wanderlust and browsing curiosity
-
-### Grid Layout:
-- Clickable tiles with hover effect
-- Scenic shots labeled with names: “Kyoto”, “Santorini”, “Banff”
-- On hover: packing tips or itinerary teasers
+- "🌴 Bali Family Trip — 80% Complete"
+- "🇯🇵 Japan Adventure – Flights Booked, Itinerary In Progress"
+- ➕ View All Trips → `/my-trips`
 
 ---
 
-## 🎯 6. Final CTA — "Ready to Plan?"
+## 💡 Trending Destinations
 
-**Purpose**: Encourage users to take action or try the assistant
+```vue
+<DestinationGrid :theme="'trending'" />
+```
 
-### CTA Strip:
-- Text: *“Ready to plan your perfect trip?”*
-- Buttons:
-  - `Launch Wanderwise Assistant`
-  - `Browse Destinations`
+- ✨ Santorini – Romantic Getaway
+- 🌄 Banff – Nature + Adventure
+- 🏖️ Bali – Beach & Culture
+- 🍜 Tokyo – Food & Shopping
 
----
-
-## 🔗 7. Footer
-
-**Purpose**: Navigation + brand reinforcement
-
-### Content:
-- About · Contact · Privacy · Blog
-- Social icons
-- “Made with ❤️ using Vue 3 + Naive UI + AI”
+Each card shows:
+- Weather
+- Price range
+- Trip theme tags
 
 ---
 
-## 🧠 Design Notes
+## 🧳 Plan Your Trip in 6 Smart Steps
 
-- **Font**: Inter — headings (600), body (400)
-- **Spacing**: Generous line height and section padding
-- **Layout**: Use `n-grid`, `n-space`, and responsive flex utilities
-- **Color Palette**:  
-  - Primary Blue: `#2C7BE5`  
-  - Accent Teal: `#00C9A7`  
-  - Text Charcoal: `#212529`  
-  - Background: `#F8F9FA`
+```vue
+<SmartSteps />
+```
 
----
-
-## 📸 Image Sourcing Recommendations
-
-Use **free, high-quality, license-free images** from these sources:
-
-- [**Unsplash**](https://unsplash.com) — Ideal for hero images, destinations, lifestyle shots  
-- [**Pexels**](https://pexels.com) — Great for travel, food, cityscape, and people photography  
-- [**Pixabay**](https://pixabay.com) — Icons, illustrations, and general purpose visuals  
-- [**Storyset**](https://storyset.com) — Customizable SVG illustrations (great for onboarding steps)  
-- [**Humaaans**](https://www.humaaans.com) — Diverse human illustrations for testimonials or avatars
-
-> ✨ Tip: Use consistent styles (light tone, airy composition) to match Wanderwise’s vibe.
+| Step | Feature     | Summary                                      |
+|------|-------------|----------------------------------------------|
+| 1    | Intent      | Destination, dates, type, budget             |
+| 2    | Flights     | Best options via AI (price + comfort)        |
+| 3    | Hotels      | Matches your vibe (luxury, budget, scenic)   |
+| 4    | Weather     | Forecast + packing tips                      |
+| 5    | Itinerary   | Auto-built based on pace & preferences       |
+| 6    | Final Review| Share, export, or revisit your plan          |
 
 ---
 
-## ✅ Summary: Wanderwise Homepage Goals
+## 🧠 Powered by Wanderwise Assistant
 
-| Goal                     | Achieved Through                          |
-|--------------------------|-------------------------------------------|
-| Inspire + Engage         | Hero image + AI tagline                   |
-| Build Trust              | Testimonials + simple flow illustration   |
-| Encourage Action         | Strong CTA sections + assistant preview   |
-| Feel Personal + Smart    | Feature cards, optional demo trip         |
+```vue
+<AssistantWidget />
+```
+
+> “Looks like you’re planning a trip to Paris.  
+Want help finding activities for Day 3?”
+
+- Suggests based on your progress
+- Optional “Ask Assistant” CTA throughout UI
+
+---
+
+## ❤️ Why People Love Wanderwise
+
+```vue
+<Testimonials />
+```
+
+> “We planned our 10-day Japan trip in 5 minutes. Everything was on point.”  
+— **Alex Chen**, 🇨🇦 Canada
+
+> “Wanderwise made our honeymoon completely stress-free.”  
+— **Sarah & Mike**, 🇫🇷 Paris
+
+---
+
+## ✈️ Just Browsing? Explore Ideas
+
+```vue
+<InspirationBoard />
+```
+
+Cards like:
+- “🍲 Best Food Cities for Fall”
+- “⛰️ Nature Escapes Within $800”
+- “👩‍👩‍👧‍👦 Family-Friendly European Spots”
+
+Tag-based filtering: [Beach] [Culture] [Romantic] [Budget] [Solo]
+
+---
+
+## 📱 Built to Feel Like an App
+
+On mobile:
+- Sticky bottom nav with:
+  `[🏠 Home] [📍 Plan] [🧳 Trips] [🤖 Assistant]`
+- No clutter. Just focus and action.
+
+---
+
+## 📌 Footer
+
+```vue
+<Footer />
+```
+
+Quick links:
+- My Trips
+- Travel Guides
+- Contact & FAQ
+- Emergency Contacts
+
+Socials: Twitter, Instagram, YouTube, Email
+
+---
+
+> Wanderwise is **your travel co-pilot** — always ready with smart suggestions, beautiful inspiration, and AI magic behind the scenes.
