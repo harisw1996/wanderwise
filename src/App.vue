@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { darkTheme, lightTheme } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import Header from './components/Header.vue'
+import Homepage from './components/Homepage.vue'
 import HeroSearch from './components/HeroSearch.vue'
 import FlightSelection from './components/FlightSelection.vue'
 import AccommodationSelection from './components/AccommodationSelection.vue'
@@ -11,7 +12,7 @@ import ItineraryBuilder from './components/ItineraryBuilder.vue'
 import TripSummary from './components/TripSummary.vue'
 import Footer from './components/Footer.vue'
 
-const currentStep = ref(1)
+const currentStep = ref(0)
 const tripData = ref({
   destination: '',
   dates: null as [number, number] | null,
@@ -29,23 +30,28 @@ const tripData = ref({
 
 const themeOverrides: GlobalThemeOverrides = {
   common: {
-    primaryColor: '#2C7BE5',
-    primaryColorHover: '#1c6ed4',
-    primaryColorPressed: '#0b5cc7',
-    successColor: '#00C9A7',
-    warningColor: '#FFC107',
-    errorColor: '#DC3545',
+    primaryColor: '#6366F1',
+    primaryColorHover: '#4F46E5',
+    primaryColorPressed: '#3730A3',
+    successColor: '#10B981',
+    warningColor: '#F59E0B',
+    errorColor: '#EF4444',
     fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
   },
   Card: {
-    borderRadius: '12px'
+    borderRadius: '16px'
   },
   Button: {
-    borderRadius: '8px'
+    borderRadius: '12px'
+  },
+  Steps: {
+    stepHeaderFontSize: '16px',
+    stepDescriptionFontSize: '14px'
   }
 }
 
 const steps = [
+  { number: 0, title: 'Home', component: 'Homepage' },
   { number: 1, title: 'Trip Details', component: 'HeroSearch' },
   { number: 2, title: 'Flights', component: 'FlightSelection' },
   { number: 3, title: 'Hotels', component: 'AccommodationSelection' },
@@ -56,11 +62,13 @@ const steps = [
 
 const currentComponent = computed(() => {
   const step = steps.find(s => s.number === currentStep.value)
-  return step?.component || 'HeroSearch'
+  return step?.component || 'Homepage'
 })
 
 const canProceed = computed(() => {
   switch (currentStep.value) {
+    case 0:
+      return true // Homepage can always proceed
     case 1:
       return tripData.value.destination && tripData.value.dates && tripData.value.tripType
     case 2:
@@ -83,7 +91,7 @@ const nextStep = () => {
 }
 
 const prevStep = () => {
-  if (currentStep.value > 1) {
+  if (currentStep.value > 0) {
     currentStep.value--
   }
 }
@@ -94,8 +102,25 @@ const skipStep = () => {
   }
 }
 
+const startPlanning = () => {
+  currentStep.value = 1
+}
+
 const updateTripData = (data: any) => {
   tripData.value = { ...tripData.value, ...data }
+}
+
+const getStepDescription = (stepNumber: number) => {
+  const descriptions = {
+    0: 'Welcome to Wanderwise',
+    1: 'Tell us about your dream trip',
+    2: 'Find the perfect flights',
+    3: 'Choose your accommodation',
+    4: 'Check the weather forecast',
+    5: 'Build your itinerary',
+    6: 'Review and save your trip'
+  }
+  return descriptions[stepNumber as keyof typeof descriptions] || ''
 }
 </script>
 
@@ -105,20 +130,28 @@ const updateTripData = (data: any) => {
       <div class="app">
         <Header />
         
-        <!-- Progress Steps -->
-        <div class="container" style="margin-top: 24px;">
-          <n-steps :current="currentStep" size="small">
-            <n-step 
-              v-for="step in steps" 
-              :key="step.number"
-              :title="step.title"
-            />
-          </n-steps>
+        <!-- Enhanced Progress Steps (hidden on homepage) -->
+        <div v-if="currentStep > 0" class="progress-section">
+          <div class="container">
+            <div class="progress-wrapper">
+              <n-steps :current="currentStep" size="medium" class="enhanced-steps">
+                <n-step 
+                  v-for="step in steps.filter(s => s.number > 0)" 
+                  :key="step.number"
+                  :title="step.title"
+                  :description="getStepDescription(step.number)"
+                />
+              </n-steps>
+            </div>
+          </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Enhanced Main Content -->
         <main class="main-content">
-          <div class="container">
+          <div v-if="currentStep === 0" class="homepage-container">
+            <Homepage @startPlanning="startPlanning" />
+          </div>
+          <div v-else class="container">
             <Transition name="fade" mode="out-in">
               <div :key="currentStep" class="step-content fade-in">
                 <HeroSearch 
@@ -177,29 +210,140 @@ const updateTripData = (data: any) => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--background);
+}
+
+.progress-section {
+  background: var(--background-alt);
+  border-bottom: 1px solid var(--border-light);
+  padding: var(--spacing-lg) 0;
+  position: sticky;
+  top: 72px;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+}
+
+.progress-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.enhanced-steps {
+  max-width: 800px;
+  width: 100%;
+}
+
+.enhanced-steps :deep(.n-step) {
+  padding: 0 var(--spacing-md);
+}
+
+.enhanced-steps :deep(.n-step-splitor) {
+  background: var(--border-light);
+}
+
+.enhanced-steps :deep(.n-step-splitor--active) {
+  background: var(--gradient-primary);
+}
+
+.enhanced-steps :deep(.n-step-indicator) {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-card);
+}
+
+.enhanced-steps :deep(.n-step-indicator--process) {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+.enhanced-steps :deep(.n-step-indicator--finish) {
+  background: var(--gradient-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.enhanced-steps :deep(.n-step-indicator--wait) {
+  background: var(--background-alt);
+  color: var(--text-light);
+  border: 2px solid var(--border);
+}
+
+.enhanced-steps :deep(.n-step-content) {
+  margin-top: var(--spacing-sm);
+}
+
+.enhanced-steps :deep(.n-step-content__title) {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.enhanced-steps :deep(.n-step-content__description) {
+  color: var(--text-light);
+  font-size: 12px;
+  margin-top: 2px;
 }
 
 .main-content {
   flex: 1;
-  padding: var(--spacing-2xl) 0;
+  min-height: calc(100vh - 200px);
+}
+
+.homepage-container {
+  padding: 0;
+  min-height: 100vh;
 }
 
 .step-content {
-  min-height: 500px;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl) 0;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .fade-enter-from {
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateX(30px);
 }
 
 .fade-leave-to {
   opacity: 0;
-  transform: translateX(-20px);
+  transform: translateX(-30px);
+}
+
+@media (max-width: 768px) {
+  .progress-section {
+    padding: var(--spacing-md) 0;
+  }
+  
+  .enhanced-steps :deep(.n-step) {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .enhanced-steps :deep(.n-step-indicator) {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  .enhanced-steps :deep(.n-step-content__title) {
+    font-size: 12px;
+  }
+  
+  .enhanced-steps :deep(.n-step-content__description) {
+    font-size: 10px;
+  }
 }
 </style>
